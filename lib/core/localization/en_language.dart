@@ -1,6 +1,15 @@
 const Map<String, String> en = {
   'title': 'Social Development Island',
-  'home': 'Home',
-  'welcome': 'Welcome to my app!',
-  'change_language': 'Change Language',
+  'signup': 'Sign Up Now!',
+  'username': 'User name',
+  'Email Address': 'Email Address',
+  'Phone Number': 'Phone Number',
+  'age': 'Ege',
+  'Password': ' Password',
+  'signupterm': 'If you have accounr',
+  'signupterm2': 'Log In Now',
+  'Register': 'Register',
+  'welcom': 'Welcome Back!',
+  'signinterm': 'If you Don\'t have account',
+  'signinterm2': 'Sign up now ',
 };

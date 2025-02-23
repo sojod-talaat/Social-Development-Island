@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:island_social_development/core/utils/app_color.dart';
 
 class AppTheme {
-  // الألوان الرئيسية
-  static const Color primaryColor = Color(0xFF6200EE);
-  static const Color secondaryColor = Color(0xFF03DAC6);
-  static const Color backgroundColor = Color(0xFFF5F5F5);
-  static const Color textColor = Colors.black;
-
   // الثيم العام للتطبيق
   static ThemeData lightTheme = ThemeData(
-    primaryColor: primaryColor,
-    scaffoldBackgroundColor: backgroundColor,
+    primaryColor: AppColors.darkBlue,
+    scaffoldBackgroundColor: AppColors.whiteColor,
     textTheme: const TextTheme(
       bodyMedium: TextStyle(
         fontSize: 18,
@@ -20,12 +15,12 @@ class AppTheme {
         wordSpacing: 2.0,
         height: 1.4,
       ),
-      // bodyText1: TextStyle(
-      //   fontSize: 16,
-      //   color: Colors.grey,
-      //   fontWeight: FontWeight.w400,
-      //   letterSpacing: 0.8,
-      // ),
+      bodyLarge: TextStyle(
+        fontSize: 16,
+        color: Colors.grey,
+        fontWeight: FontWeight.w400,
+        letterSpacing: 0.8,
+      ),
       headlineLarge: TextStyle(
         fontSize: 32,
         fontWeight: FontWeight.bold,
@@ -33,41 +28,76 @@ class AppTheme {
         letterSpacing: 1.5,
       ),
     ),
-
-    // textTheme: const TextTheme(
-
-    //   bodyLarge: TextStyle(
-    //       fontSize: 18, fontWeight: FontWeight.bold, color: textColor),
-    //   bodyMedium: TextStyle(fontSize: 16, color: textColor),
-    // ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: primaryColor,
+      backgroundColor: AppColors.darkBlue,
       titleTextStyle: TextStyle(
           fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor,
+        backgroundColor: AppColors.darkBlue,
         foregroundColor: Colors.white,
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+            color: AppColors.lightGrey, width: 2), // اللون العادي
+        borderRadius: BorderRadius.circular(10),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+            color: AppColors.darkBlue, width: 2.0), // اللون عند الضغط
+        borderRadius: BorderRadius.circular(10),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide:
+            const BorderSide(color: Colors.red, width: 2.0), // اللون عند الخطأ
+        borderRadius: BorderRadius.circular(10),
       ),
     ),
   );
 
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
-    primaryColor: primaryColor,
-    scaffoldBackgroundColor: Colors.black,
+    primaryColor: AppColors.darkBlue,
+    scaffoldBackgroundColor: AppColors.blackColor,
     textTheme: const TextTheme(
       bodyLarge: TextStyle(
           fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
       bodyMedium: TextStyle(fontSize: 16, color: Colors.white),
     ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.black,
+      backgroundColor: AppColors.darkBlue,
       titleTextStyle: TextStyle(
           fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.darkBlue,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+            color: AppColors.lightGrey, width: 2), // اللون العادي
+        borderRadius: BorderRadius.circular(10),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderSide: const BorderSide(
+            color: AppColors.darkBlue, width: 2.0), // اللون عند الضغط
+        borderRadius: BorderRadius.circular(10),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderSide:
+            const BorderSide(color: Colors.red, width: 2.0), // اللون عند الخطأ
+        borderRadius: BorderRadius.circular(10),
+      ),
     ),
   );
 }

@@ -1,0 +1,117 @@
+import 'package:flutter/material.dart';
+import 'package:island_social_development/core/providers/quiz_provider.dart';
+import 'package:island_social_development/core/utils/app_color.dart';
+import 'package:island_social_development/models/competition_model.dart';
+import 'package:island_social_development/views/user_app/screens/question_screen.dart';
+import 'package:provider/provider.dart';
+
+class UserTypeContestScreen extends StatelessWidget {
+  final List<CompetitionModel>? competitionList;
+  final String type;
+
+  const UserTypeContestScreen(
+      {super.key, required this.competitionList, required this.type});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<QuizProvider>(
+      builder: (context, value, child) => Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "المسابقات",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          backgroundColor: AppColors.darkBlue, // لون أنيق لشريط التطبيق
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.white, AppColors.lightGrey],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: value.competitions.isEmpty
+              ? const Center(
+                  child: Text('!لا يوجد مسابقات حتى الان '),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(10),
+                  itemCount: competitionList!.length,
+                  itemBuilder: (context, index) {
+                    final competition = competitionList![index];
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        elevation: 6,
+                        shadowColor: Colors.black.withOpacity(0.3),
+                        child: InkWell(
+                          onTap: () async {
+                            await value.fetchQuestions(type, competition.id);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => StartQuizPage(
+                                    competition,
+                                    value.questions2,
+                                    value.isQuizCompleted(competition.title))));
+                          },
+                          borderRadius: BorderRadius.circular(15),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              gradient: const LinearGradient(
+                                colors: [
+                                  AppColors.darkBlue,
+                                  AppColors.primaryGreen
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.emoji_events,
+                                    color: Colors.white, size: 40),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        competition.title,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        "عدد الأسئلة: ${competition.questionCount}",
+                                        style: const TextStyle(
+                                            color: Colors.white70),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Icon(Icons.arrow_forward_ios,
+                                    color: Colors.white),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ),
+    );
+  }
+}

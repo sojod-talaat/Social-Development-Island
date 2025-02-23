@@ -22,5 +22,3 @@ abstract class Styles {
     fontWeight: FontWeight.w500,
   );
 }
-
-const TextStyle textStyle = TextStyle();
