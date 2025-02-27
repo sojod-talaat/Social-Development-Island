@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:island_social_development/core/providers/quiz_provider.dart';
-import 'package:island_social_development/views/admin_app/fam_card.dart';
+import 'package:island_social_development/views/admin_app/result/fam_card.dart';
 import 'package:provider/provider.dart';
 import 'result_card.dart';
 

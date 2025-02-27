@@ -4,6 +4,7 @@ import 'package:island_social_development/models/competition_model.dart';
 import 'package:island_social_development/models/doura_tahfiz.dart';
 import 'package:island_social_development/models/fam_answer.dart';
 import 'package:island_social_development/models/question_model.dart';
+import 'package:island_social_development/models/quiz_model.dart';
 import 'package:island_social_development/models/user_model.dart';
 import 'package:island_social_development/views/auth/widgets/snak_bar.dart';
 
@@ -194,11 +195,126 @@ class FireStoreController {
   /////////////////////////مسابقات العائلة
 
   //
-  Future<void> addFamQuestionsToFirestore(QuestionModel question) async {
-    await FirebaseFirestore.instance
+  addFamQuizWithStartDate(QuizModel quizModel) async {
+    try {
+      // إضافة/تحديث المسابقة مع تاريخ البدء
+      await FirebaseFirestore.instance
+          .collection('fam_questions') // مجموعة المسابقات
+          .doc(quizModel.quizName) // استخدام `quizId` كـ ID للمسابقة
+          .set(quizModel.toJson());
+
+      print("✅ تم إضافة/تحديث تاريخ البدء للمسابقة بنجاح!");
+    } catch (e) {
+      print("❌ خطأ أثناء إضافة/تحديث تاريخ البدء للمسابقة: $e");
+    }
+  }
+
+  Future<void> addFamQuestionsToFirestore(
+      String name, QuestionModel question) async {
+    final CollectionReference questionsCollection = FirebaseFirestore.instance
         .collection('fam_questions')
-        .doc(question.id) // ✅ الرقم التسلسلي كـ ID
-        .set(question.toJson()); // ✅ استخدام `toMap()` لتخزين البيانات
+        .doc(name)
+        .collection('questions');
+
+    // ✅ جلب آخر رقم تسلسلي
+    final QuerySnapshot snapshot = await questionsCollection
+        .orderBy('number', descending: true)
+        .limit(1)
+        .get();
+
+    int lastNumber = 0;
+    if (snapshot.docs.isNotEmpty) {
+      lastNumber = snapshot.docs.first['number']; // الحصول على آخر رقم مسجل
+    }
+
+    // ✅ تعيين رقم جديد وزيادته
+    int newNumber = lastNumber + 1;
+    question.id = newNumber.toString(); // تحديث الـ ID برقم التسلسل الجديد
+
+    // ✅ إضافة السؤال مع الرقم الجديد
+    await questionsCollection.doc(question.id).set({
+      ...question.toJson(),
+      'number': newNumber, // تخزين الرقم التسلسلي
+    });
+  }
+
+  Future<QuestionModel?> getTodayQuestion(String name) async {
+    try {
+      final DocumentSnapshot competitionDoc = await FirebaseFirestore.instance
+          .collection('fam_questions')
+          .doc(name)
+          .get();
+
+      if (!competitionDoc.exists) {
+        print("⚠️ لا توجد مسابقة بهذا الاسم!");
+        return null;
+      }
+
+      // ✅ التحقق من نوع `start_date`
+      dynamic startDateData = competitionDoc['startDate'];
+
+      DateTime startDate;
+      if (startDateData is Timestamp) {
+        startDate = startDateData.toDate(); // ✅ تحويل Timestamp إلى DateTime
+      } else if (startDateData is String) {
+        startDate =
+            DateTime.parse(startDateData); // ✅ تحويل String إلى DateTime
+      } else {
+        print("⚠️ نوع `start_date` غير مدعوم!");
+        return null;
+      }
+
+      DateTime today = DateTime.now();
+
+      // ✅ حساب اليوم المناسب للمسابقة
+      int dayNumber = today.difference(startDate).inDays + 1;
+      print("🔹 اليوم الحالي من المسابقة: $dayNumber");
+
+      // ✅ جلب السؤال المناسب لهذا اليوم
+      final DocumentSnapshot questionDoc = await firebaseFirestore
+          .collection('fam_questions')
+          .doc(name)
+          .collection('questions')
+          .doc(dayNumber.toString())
+          .get();
+
+      if (!questionDoc.exists) {
+        print("⚠️ لم يتم العثور على سؤال لهذا اليوم!");
+        return null;
+      }
+
+      return QuestionModel.fromJson(questionDoc.data() as Map<String, dynamic>);
+    } catch (e) {
+      print("❌ خطأ أثناء جلب السؤال: $e");
+      return null;
+    }
+  }
+
+  Future<List<QuizModel>> fetchFamQuizzes() async {
+    try {
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance.collection('fam_questions').get();
+
+      List<QuizModel> quizzes = querySnapshot.docs
+          .map((doc) {
+            final data = doc.data() as Map<String, dynamic>?;
+
+            if (data == null) {
+              print("⚠️ المستند ${doc.id} لا يحتوي على بيانات صالحة!");
+              return null;
+            }
+
+            return QuizModel.fromJson(doc.id, data);
+          })
+          .whereType<QuizModel>()
+          .toList();
+
+      print("✅ تم جلب ${quizzes.length} مسابقة بنجاح.");
+      return quizzes;
+    } catch (e) {
+      print("❌ خطأ أثناء جلب المسابقات: $e");
+      return [];
+    }
   }
 
   /// ✅ دالة لاسترجاع السؤال المناسب بناءً على اليوم الحالي
@@ -235,5 +351,66 @@ class FireStoreController {
       return family;
     }).toList();
     return dourats;
+  }
+
+  ///////////////////////////////
+  Future<List<QuestionModel>> getQuizesQuestions(String quizId) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('fam_questions')
+          .doc(quizId)
+          .collection('questions')
+          .get();
+
+      List<QuestionModel> questions = querySnapshot.docs.map((doc) {
+        return QuestionModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+
+      return questions;
+    } catch (e) {
+      print("Error getting questions: $e");
+      return [];
+    }
+  }
+
+  Future<void> updateQuestion(
+      String quizId, String questionId, QuestionModel questionModel) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('fam_questions')
+          .doc(quizId)
+          .collection('questions')
+          .doc(questionId)
+          .update(questionModel.toJson());
+      print('تم تحديث السؤال بنجاح!');
+    } catch (e) {
+      print('حدث خطأ أثناء التحديث: $e');
+    }
+  }
+
+  RemoveQuiz(String quizId) async {
+    await FirebaseFirestore.instance
+        .collection('fam_questions')
+        .doc(quizId)
+        .delete();
+  }
+
+  Future<List<QuestionModel>> getCompetitionQuestions(String quizId) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('competitions')
+          .doc(quizId)
+          .collection('questions')
+          .get();
+
+      List<QuestionModel> questions = querySnapshot.docs.map((doc) {
+        return QuestionModel.fromJson(doc.data() as Map<String, dynamic>);
+      }).toList();
+
+      return questions;
+    } catch (e) {
+      print("Error getting questions: $e");
+      return [];
+    }
   }
 }

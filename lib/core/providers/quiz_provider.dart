@@ -2,19 +2,20 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:island_social_development/controllers/firestore_controller.dart';
+import 'package:island_social_development/core/routing/app_router.dart';
 import 'package:island_social_development/core/utils/hive_box.dart';
 import 'package:island_social_development/models/competition_model.dart';
 import 'package:island_social_development/models/fam_answer.dart';
 import 'package:island_social_development/models/question_model.dart';
+import 'package:island_social_development/models/quiz_model.dart';
 import 'package:island_social_development/models/user_model.dart';
 
 class QuizProvider with ChangeNotifier {
   QuizProvider() {
     focusNode = FocusNode();
     focusNode.addListener(_onFocusChange);
-    getUserAge();
+    getCurrentuser();
     loadResults();
-    getTodayQuestion();
     getAllFamily();
   }
 
@@ -34,7 +35,7 @@ class QuizProvider with ChangeNotifier {
     });
   }
 
-  Future<UserModel?>? getUserAge() async {
+  Future<UserModel?>? getCurrentuser() async {
     currentUser = await prefsHelper.getUserModel();
     if (currentUser != null) {
       checkCategory();
@@ -56,6 +57,8 @@ class QuizProvider with ChangeNotifier {
   TextEditingController contestName = TextEditingController();
   TextEditingController conestlenght = TextEditingController();
   TextEditingController timerController = TextEditingController();
+  TextEditingController ramdandate = TextEditingController();
+  TextEditingController ramdanName = TextEditingController();
   int timercount = 0;
 
   ///متغيرات الاسئلة
@@ -104,11 +107,11 @@ class QuizProvider with ChangeNotifier {
   String getType(int typeNumber) {
     switch (typeNumber) {
       case 1:
-        return "general";
+        return "islamic";
       case 2:
         return "scientific";
       case 3:
-        return "islamic";
+        return "general";
       default:
         throw Exception("النوع غير صحيح");
     }
@@ -116,7 +119,7 @@ class QuizProvider with ChangeNotifier {
 
   CompetitionModel? competitionModel;
 
-  CompetitionModel addQuiz() {
+  CompetitionModel addComptition() {
     competitionModel = CompetitionModel(
         id: "",
         title: contestName.text,
@@ -139,7 +142,21 @@ class QuizProvider with ChangeNotifier {
     return null;
   }
 
-  String? validateCompetitonLength(String value) {
+  String? validateRamdanName(String value) {
+    if (value.isEmpty) {
+      return 'يرجى ادخال اسم المسابقة ';
+    }
+    return null;
+  }
+
+  String? validateRamdan(String value) {
+    if (value.isEmpty) {
+      return 'يرجى ادخال تاريخ البدء ';
+    }
+    return null;
+  }
+
+  String? validateCompetitonLeth(String value) {
     if (value.isEmpty) {
       return ' يرجى تحديد عدد الاسئلة ';
     }
@@ -197,6 +214,20 @@ class QuizProvider with ChangeNotifier {
   }
 
   List<CompetitionModel> competitions = [];
+  CompetitionModel? youthGenral;
+  CompetitionModel? youthscientific;
+  CompetitionModel? youthislamic;
+  CompetitionModel? kidsGenral;
+  CompetitionModel? kidscientific;
+  CompetitionModel? kidsislamic;
+  CompetitionModel? SendyouthGenral(
+    CompetitionModel competition,
+  ) {
+    competition = youthGenral!;
+    notifyListeners();
+    return youthGenral;
+  }
+
   Future<List<CompetitionModel>>? getCompetitions(
       BuildContext context, String type) async {
     competitions = await FireStoreController.fireStoreHelper
@@ -205,6 +236,17 @@ class QuizProvider with ChangeNotifier {
     return competitions;
   }
 
+  List<CompetitionModel> competitions2 = [];
+
+  Future<List<CompetitionModel>>? getCompetitions2(
+      String category, BuildContext context, String type) async {
+    competitions2 = await FireStoreController.fireStoreHelper
+        .getCompetitions(category: category, type: type);
+    print(competitions2.length);
+    return competitions2;
+  }
+
+//////////////////////////////////////////////////////
   List<QuestionModel> FamQuestion = [];
   int addedFamQuestions = 0;
   int maxQuestions = 30;
@@ -229,8 +271,8 @@ class QuizProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addNewQuestiontoFam1(
-      String questionText, List<String> options, String correctAnswer) async {
+  Future<void> addNewQuestiontoFam1(String questionText, List<String> options,
+      String correctAnswer, String name) async {
     if (addedFamQuestions < maxQuestions) {
       // ✅ اجلب آخر رقم تسلسلي من Firestore
       int lastQuestionNumber = await getLastQuestionNumber();
@@ -247,7 +289,7 @@ class QuizProvider with ChangeNotifier {
 
       // ✅ حفظ السؤال في Firestore
       await FireStoreController.fireStoreHelper
-          .addFamQuestionsToFirestore(question);
+          .addFamQuestionsToFirestore(name, question);
 
       // ✅ تحديث عدد الأسئلة المضافة
       addedFamQuestions++;
@@ -383,28 +425,30 @@ class QuizProvider with ChangeNotifier {
     return userAnser;
   }
 
+////////////////////////
+  List<QuizModel> quizes = [];
+  AddQuiz(DateTime date) async {
+    QuizModel quiz = QuizModel(quizName: ramdanName.text, startDate: date);
+    quizes =
+        await FireStoreController.fireStoreHelper.addFamQuizWithStartDate(quiz);
+
+    getAllQuizes();
+
+    notifyListeners();
+  }
+
+  getAllQuizes() async {
+    quizes = await FireStoreController.fireStoreHelper.fetchFamQuizzes();
+    notifyListeners();
+  }
+
   // مسابقة الاسرة
   QuestionModel? todeyQuestion;
-  Future<QuestionModel?> getTodayQuestion() async {
+  Future<QuestionModel?> getTodayQuestion(String name) async {
     try {
-      // ✅ تحديد تاريخ البدء
-      DateTime startDate = DateTime(2025, 2, 22);
-      DateTime today = DateTime.now();
-
-      // ✅ حساب الفرق بين التاريخ الحالي وتاريخ البدء
-      int dayNumber = today.difference(startDate).inDays + 1;
-      print("🔹 Day Number: $dayNumber");
-
       // ✅ جلب السؤال المناسب برقم اليوم
       todeyQuestion =
-          await FireStoreController.fireStoreHelper.getQuestionById("2");
-
-      if (todeyQuestion != null) {
-        print("✅ Question Retrieved: ${todeyQuestion!.question}");
-        print("✅ Correct Answer: ${todeyQuestion!.correctAnswer}");
-      } else {
-        print("⚠️ لم يتم العثور على السؤال في Firestore!");
-      }
+          await FireStoreController.fireStoreHelper.getTodayQuestion(name);
 
       return todeyQuestion;
     } catch (e) {
@@ -418,6 +462,49 @@ class QuizProvider with ChangeNotifier {
   List<FamilyStatsModel> family = [];
   getAllFamily() async {
     family = await FireStoreController.fireStoreHelper.getAllFamilys();
+    notifyListeners();
+  }
+
+  ////////////////////////////////////////
+  ///دالة لعرض جميع الاسئلة بناءا على اسم المسابقة
+  // جلب الأسئلة من Firestore
+  List<QuestionModel> quizesQuestion = [];
+
+  getAllQuestionQuizes(String name) async {
+    quizesQuestion =
+        await FireStoreController.fireStoreHelper.getQuizesQuestions(name);
+    notifyListeners();
+  }
+
+  Future<void> updateQuestion(
+      String quizId, String questionId, QuestionModel questionModel) async {
+    try {
+      await FireStoreController.fireStoreHelper
+          .updateQuestion(quizId, questionId, questionModel);
+      print('تم تحديث السؤال بنجاح!');
+      getAllQuestionQuizes(quizId);
+      notifyListeners(); // قم بإعلام المستمعين بتحديث البيانات
+    } catch (e) {
+      print('حدث خطأ أثناء التحديث: $e');
+    }
+  }
+
+  removeQuiz(String qiuzid) async {
+    FireStoreController.fireStoreHelper.RemoveQuiz(qiuzid);
+    quizes.remove(qiuzid);
+    notifyListeners();
+    getAllQuizes();
+  }
+
+  List<QuestionModel> questions3 = [];
+  fetchCompetionQuestions(
+    String category,
+    String type,
+    String competitionId,
+  ) async {
+    questions3 = await FireStoreController.fireStoreHelper
+        .getQuestions(category, type, competitionId);
+
     notifyListeners();
   }
 }

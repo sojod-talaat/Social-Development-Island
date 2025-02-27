@@ -30,5 +30,6 @@ class SettingsProvider with ChangeNotifier {
 
   signOut() async {
     await AuthController.authhelper.signout();
+    await prefsHelper.removeUser();
   }
 }

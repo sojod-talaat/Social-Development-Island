@@ -4,9 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:island_social_development/controllers/auth_controller.dart';
 import 'package:island_social_development/controllers/firestore_controller.dart';
+import 'package:island_social_development/core/routing/app_router.dart';
 import 'package:island_social_development/core/utils/hive_box.dart';
 import 'package:island_social_development/models/user_model.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
   TextEditingController nameController = TextEditingController();
@@ -17,6 +17,7 @@ class AuthProvider with ChangeNotifier {
   TextEditingController famNam = TextEditingController();
   TextEditingController loginemailController = TextEditingController();
   TextEditingController loginpasswordController = TextEditingController();
+  TextEditingController resetpasswordemail = TextEditingController();
 
   bool SignInautoValidate = false;
   bool SignUpautoValidate = false;
@@ -58,9 +59,10 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  void submitSignUpForm(BuildContext context, GlobalKey<FormState> key) {
+  void submitSignUpForm(
+      BuildContext context, GlobalKey<FormState> key, String type) async {
     if (key.currentState!.validate()) {
-      signup(context);
+      await signup(context, type);
       signUpclear();
     } else {
       SignUpautoValidate = false;
@@ -68,33 +70,65 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  signup(BuildContext context) async {
-    UserCredential? usercreditanl = await AuthController.authhelper
+  signup(BuildContext context, String type) async {
+    UserCredential? userCredential = await AuthController.authhelper
         .signUp(emailController.text, passwordController.text, context);
-    int age = 0;
-    if (selectedStage == "المرحلة الابتدائية ") {
-      age = 12;
-    } else {
-      age = 13;
+
+    int age = (selectedStage == "المرحلة الابتدائية ") ? 12 : 13;
+
+    if (userCredential == null || userCredential.user == null) {
+      print("⚠️ فشل إنشاء المستخدم");
+      return;
     }
-    UserModel user = UserModel(
-        id: usercreditanl!.user!.uid,
+
+    String userId = userCredential.user!.uid;
+
+    if (type == "1") {
+      // 🔥 إذا كان مستخدم عادي
+      UserModel user = UserModel(
+        id: userId,
         name: nameController.text,
         email: emailController.text,
-        age: age);
+        age: age,
+        userType: "user", // ✅ تخزينه كمستخدم عادي
+      );
 
-    await FireStoreController.fireStoreHelper.saveUserToFirestore(
-      user,
-    );
-    prefsHelper.saveFamName(famNam.text);
+      await FireStoreController.fireStoreHelper.saveUserToFirestore(user);
+      await prefsHelper.saveUserModel(user);
+    } else {
+      // 🔥 إذا كان Family
+      String familyName = famNam.text;
 
-    await FirebaseFirestore.instance
-        .collection('families')
-        .doc(famNam.text)
-        .set({'correctAnswersCount': 0, 'name': famNam.text},
-            SetOptions(merge: true));
-    await prefsHelper.saveUserModel(user);
-    //****************************************************** */
+      // ✅ حفظ المستخدم في `users` ولكن بنوع `family`
+      UserModel familyUser = UserModel(
+        id: userId,
+        name: nameController.text,
+        email: emailController.text,
+        age: age,
+        userType: "family", // ✅ نوع المستخدم "family"
+      );
+
+      await FireStoreController.fireStoreHelper.saveUserToFirestore(familyUser);
+      await prefsHelper.saveUserModel(familyUser);
+
+      // ✅ حفظ العائلة في `families` مع بيانات إضافية
+      await FirebaseFirestore.instance
+          .collection('families')
+          .doc(familyName)
+          .set({
+        'correctAnswersCount': 0,
+        'name': familyName,
+        'familyId': userId, // ربط الحساب بمؤسس العائلة
+      }, SetOptions(merge: true));
+      await FirebaseFirestore.instance
+          .collection('family_quiz_answers')
+          .doc(familyName)
+          .set({});
+      // ✅ حفظ اسم العائلة محليًا
+      prefsHelper.saveFamName(familyName);
+    }
+
+    // 🔥 تحميل بيانات المستخدم بعد التسجيل
     currentUser = await AuthController.authhelper.loadUser(context);
   }
 
@@ -163,5 +197,37 @@ class AuthProvider with ChangeNotifier {
     }
 
     return null;
+  }
+
+  bool _isHeadOfFamily = false;
+
+  bool get isHeadOfFamily => _isHeadOfFamily;
+
+  void toggleHeadOfFamily(bool value) {
+    _isHeadOfFamily = value;
+    notifyListeners(); // إخطار المستمعين بتحديث الحالة
+  }
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
+
+  Future<void> resetPassword(String email, BuildContext context) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      Navigator.pushReplacementNamed(context, AppRouter.confirmationPage);
+    } catch (e) {
+      _errorMessage = "حدث خطأ: ${e.toString()}";
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }

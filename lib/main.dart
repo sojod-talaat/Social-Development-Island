@@ -13,8 +13,6 @@ import 'package:island_social_development/firebase_options.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -57,7 +55,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         onGenerateRoute: appRouter.generatedRoute,
         initialRoute: AppRouter.initial,
-        locale: Locale('ar'),
+        locale: const Locale('ar'),
         supportedLocales: const [
           Locale('ar'),
           Locale('en'),

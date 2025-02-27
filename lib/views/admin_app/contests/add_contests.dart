@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:island_social_development/core/providers/quiz_provider.dart';
 import 'package:island_social_development/core/routing/app_router.dart';
 import 'package:island_social_development/core/utils/app_color.dart';
-import 'package:island_social_development/views/admin_app/add_question_screen.dart';
+import 'package:island_social_development/views/admin_app/Family/all_fam.dart';
 import 'package:island_social_development/views/widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 
@@ -14,12 +14,13 @@ class AddContests extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<QuizProvider>(
       builder: (context, quizPovider, child) => Scaffold(
-          appBar: AppBar(title: const Text('اضافة مسابقة جديدة')),
+          appBar: AppBar(title: const Text('  المسابقات')),
           drawer: const AppDrawer(),
           body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             InkWell(
               onTap: () {
                 quizPovider.chaneCategory(1);
+
                 Navigator.pushNamed(
                   context,
                   AppRouter.typecontest,
@@ -84,16 +85,13 @@ class AddContests extends StatelessWidget {
               height: 12,
             ),
             InkWell(
-              onTap: () {
+              onTap: () async {
+                await quizPovider.getAllQuizes();
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => AddQuestionsPage(
-                        count: quizPovider.maxQuestions,
-                        id: '',
-                        type: 1,
-                      ),
-                    ));
+                        builder: (context) =>
+                            AllQuizesScreen(quiz: quizPovider.quizes)));
               },
               child: Card(
                   color: AppColors.darkBlue,

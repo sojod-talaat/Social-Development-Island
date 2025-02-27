@@ -68,11 +68,15 @@ class AuthController {
   }
 
 //////////////////////////////////////////////////////////////////////////التحقق
-  void checkUserStatus(BuildContext context) {
+  void checkUserStatus(
+    BuildContext context,
+  ) {
     Future.delayed(const Duration(seconds: 5), () {
       auth.authStateChanges().listen((user) {
         if (user != null) {
-          loadUser(context);
+          loadUser(
+            context,
+          );
         } else {
           Navigator.pushNamed(context, AppRouter.signup);
         }
@@ -81,36 +85,78 @@ class AuthController {
   }
 
   ///////////////////////////////////////////////////////ارجاع المستخدم الحالي
+  // Future<UserModel?> loadUser(BuildContext context,String type) async {
+  //   final userLocal = await prefsHelper.getUserModel();
+
+  //   if (userLocal != null&&type!="2") {
+  //     // 🔥 تأجيل التنقل حتى يتم بناء الـ Widget بالكامل
+  //     WidgetsBinding.instance.addPostFrameCallback((_) {
+  //       if (context.mounted) {
+  //         if (userLocal.email == "fahadj1p@gmail.com") {
+  //           Navigator.pushNamed(context, AppRouter.adminhome);
+  //         } else {
+  //           Navigator.pushNamed(context, AppRouter.userhome);
+  //         }
+  //       }
+  //     });
+  //     return userLocal;
+  //   }
+
+  //   // 🔥 جلب بيانات المستخدم من FirebaseAuth
+  //   final user = FirebaseAuth.instance.currentUser;
+  //   if (user != null) {
+  //     // 🔥 جلب بيانات المستخدم من Firestore
+  //     final userModel = await fetchUserFromFirestore(user.uid);
+  //     if (userModel != null&&type!="2") {
+  //       await prefsHelper.saveUserModel(userModel); // 🔥 حفظ المستخدم محليًا
+
+  //       // 🔥 تأجيل التنقل بعد اكتمال بناء الواجهة
+  //       WidgetsBinding.instance.addPostFrameCallback((_) {
+  //         if (context.mounted) {
+  //           if (userModel.email == "fahadj1p@gmail.com") {
+  //             Navigator.pushReplacementNamed(context, AppRouter.adminhome);
+  //           } else {
+  //             Navigator.pushReplacementNamed(context, AppRouter.userhome);
+  //           }
+  //         }
+  //       });
+
+  //       return userModel;
+  //     }
+  //   }
+
+  //   return null; // 🔴 في حال لم يتم العثور على بيانات المستخدم
+  // }
   Future<UserModel?> loadUser(BuildContext context) async {
     final userLocal = await prefsHelper.getUserModel();
-
+    print(userLocal?.userType);
     if (userLocal != null) {
-      // 🔥 تأجيل التنقل حتى يتم بناء الـ Widget بالكامل
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (context.mounted) {
           if (userLocal.email == "fahadj1p@gmail.com") {
-            Navigator.pushNamed(context, AppRouter.adminhome);
+            Navigator.pushReplacementNamed(context, AppRouter.adminhome);
+          } else if (userLocal.userType == "family") {
+            Navigator.pushReplacementNamed(context, AppRouter.familyhome);
           } else {
-            Navigator.pushNamed(context, AppRouter.userhome);
+            Navigator.pushReplacementNamed(context, AppRouter.userhome);
           }
         }
       });
       return userLocal;
     }
 
-    // 🔥 جلب بيانات المستخدم من FirebaseAuth
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      // 🔥 جلب بيانات المستخدم من Firestore
       final userModel = await fetchUserFromFirestore(user.uid);
       if (userModel != null) {
-        await prefsHelper.saveUserModel(userModel); // 🔥 حفظ المستخدم محليًا
+        await prefsHelper.saveUserModel(userModel);
 
-        // 🔥 تأجيل التنقل بعد اكتمال بناء الواجهة
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) {
             if (userModel.email == "fahadj1p@gmail.com") {
               Navigator.pushReplacementNamed(context, AppRouter.adminhome);
+            } else if (userModel.userType == "family") {
+              Navigator.pushReplacementNamed(context, AppRouter.familyhome);
             } else {
               Navigator.pushReplacementNamed(context, AppRouter.userhome);
             }
@@ -121,37 +167,82 @@ class AuthController {
       }
     }
 
-    return null; // 🔴 في حال لم يتم العثور على بيانات المستخدم
+    return null;
   }
 
   ///////////////////////////////////
+  // Future<UserModel?> fetchUserFromFirestore(String id) async {
+  //   try {
+  //     DocumentSnapshot userDoc =
+  //         await FirebaseFirestore.instance.collection('users').doc(id).get();
+
+  //     if (userDoc.exists) {
+  //       // تحويل البيانات إلى نموذج UserModel
+  //       UserModel user =
+  //           UserModel.fromJson(userDoc.data() as Map<String, dynamic>);
+
+  //       // حفظ بيانات المستخدم في SharedPreferences
+  //       await prefsHelper.saveUserModel(user);
+
+  //       // طباعة اسم المستخدم (لأغراض التصحيح)
+  //       print(user.name);
+
+  //       // إرجاع بيانات المستخدم
+  //       return user;
+  //     } else {
+  //       // إذا لم يتم العثور على المستخدم، إرجاع null
+  //       print("No user found with email: $id");
+  //       return null;
+  //     }
+  //   } catch (e) {
+  //     // طباعة الخطأ وإعادة رمي الاستثناء إذا لزم الأمر
+  //     print("Error fetching user: $e");
+  //     rethrow; // إعادة رمي الاستثناء إذا كنت تريد معالجته في مكان آخر
+  //   }
+  // }
   Future<UserModel?> fetchUserFromFirestore(String id) async {
     try {
+      // 🔥 البحث أولًا في مجموعة "families"
+      DocumentSnapshot familyDoc =
+          await FirebaseFirestore.instance.collection('families').doc(id).get();
+
+      if (familyDoc.exists) {
+        // ✅ تحويل بيانات العائلة إلى UserModel مع تحديد `userType`
+        Map<String, dynamic> familyData =
+            familyDoc.data() as Map<String, dynamic>;
+
+        UserModel user = UserModel(
+          id: id,
+          name: familyData['name'] ?? '',
+          email: familyData['email'] ?? '', // تأكد أن هناك حقل `email`
+          age: familyData['age'] ?? 0,
+          userType: "family", // ✅ تأكيد أن نوع الحساب هو "family"
+        );
+
+        await prefsHelper.saveUserModel(user);
+        print("✅ User found in families: ${user.name}, Type: ${user.userType}");
+        return user;
+      }
+
+      // 🔥 البحث في مجموعة "users" إذا لم يُعثر عليه في "families"
       DocumentSnapshot userDoc =
           await FirebaseFirestore.instance.collection('users').doc(id).get();
 
       if (userDoc.exists) {
-        // تحويل البيانات إلى نموذج UserModel
         UserModel user =
             UserModel.fromJson(userDoc.data() as Map<String, dynamic>);
 
-        // حفظ بيانات المستخدم في SharedPreferences
         await prefsHelper.saveUserModel(user);
-
-        // طباعة اسم المستخدم (لأغراض التصحيح)
-        print(user.name);
-
-        // إرجاع بيانات المستخدم
+        print("✅ User found in users: ${user.name}, Type: ${user.userType}");
         return user;
-      } else {
-        // إذا لم يتم العثور على المستخدم، إرجاع null
-        print("No user found with email: $id");
-        return null;
       }
+
+      // ❌ إذا لم يُعثر على المستخدم في أي مجموعة
+      print("❌ No user found with ID: $id");
+      return null;
     } catch (e) {
-      // طباعة الخطأ وإعادة رمي الاستثناء إذا لزم الأمر
-      print("Error fetching user: $e");
-      rethrow; // إعادة رمي الاستثناء إذا كنت تريد معالجته في مكان آخر
+      print("❌ Error fetching user: $e");
+      return null;
     }
   }
 

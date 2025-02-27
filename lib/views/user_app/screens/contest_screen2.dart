@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:island_social_development/core/providers/quiz_provider.dart';
 import 'package:island_social_development/core/utils/app_color.dart';
-import 'package:island_social_development/views/user_app/screens/fam_question.dart';
+import 'package:island_social_development/core/utils/hive_box.dart';
+import 'package:island_social_development/models/user_model.dart';
+import 'package:island_social_development/views/user_app/screens/Family/fam_question.dart';
+import 'package:island_social_development/views/user_app/screens/quizes.dart';
 import 'package:island_social_development/views/user_app/screens/type_contest_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart'; // أيقونات حديثة وجميلة
 
-class CompetitionGridScreen extends StatelessWidget {
+class CompetitionGridScreen extends StatefulWidget {
   const CompetitionGridScreen({Key? key}) : super(key: key);
+
+  @override
+  State<CompetitionGridScreen> createState() => _CompetitionGridScreenState();
+}
+
+class _CompetitionGridScreenState extends State<CompetitionGridScreen> {
+  int age = 0;
+  @override
+  void initState() async {
+    super.initState();
+    SharedPreferencesHelper prefsHelper = SharedPreferencesHelper();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +77,9 @@ class CompetitionGridScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => UserTypeContestScreen(
-                            competitionList: value.competitions,
+                            competition: (value.currentUser!.age == 12)
+                                ? value.kidsGenral!
+                                : value.youthGenral!,
                             type: "general",
                           ),
                         ),
@@ -76,7 +93,9 @@ class CompetitionGridScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => UserTypeContestScreen(
-                            competitionList: value.competitions,
+                            competition: (value.currentUser!.age == 12)
+                                ? value.kidscientific!
+                                : value.kidscientific!,
                             type: "scientific",
                           ),
                         ),
@@ -90,24 +109,19 @@ class CompetitionGridScreen extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => UserTypeContestScreen(
-                            competitionList: value.competitions,
+                            competition: (value.currentUser!.age == 12)
+                                ? value.kidsislamic!
+                                : value.youthislamic!,
                             type: "islamic",
                           ),
                         ),
                       );
                       break;
                     case 3:
-                      await value.getTodayQuestion();
-
-                      // ignore: use_build_context_synchronously
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FamQuestionScreen(
-                            todayQuestion: value.todeyQuestion!,
-                          ),
-                        ),
-                      );
+                      await value.getAllQuizes();
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              QuizesScreen(quiz: value.quizes)));
                       break;
                   }
                 },

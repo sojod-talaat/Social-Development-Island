@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:island_social_development/core/utils/app_color.dart';
-import 'package:island_social_development/views/admin_app/add_contests.dart';
-import 'package:island_social_development/views/admin_app/add_doura_screen.dart';
-import 'package:island_social_development/views/admin_app/result_screen.dart';
+import 'package:island_social_development/views/admin_app/contests/add_contests.dart';
+import 'package:island_social_development/views/admin_app/dourat/add_doura_screen.dart';
+import 'package:island_social_development/views/admin_app/result/result_screen.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   @override
@@ -32,7 +32,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.emoji_events),
-            label: 'اضافة مسابقة',
+            label: ' المسابقة ',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.video_library),

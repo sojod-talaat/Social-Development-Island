@@ -13,8 +13,14 @@ class TypeContestScreen extends StatelessWidget {
           appBar: AppBar(title: const Text('اضافة مسابقة جديدة')),
           body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             InkWell(
-              onTap: () {
+              onTap: () async {
                 quizProvider.changetype(1);
+
+                await quizProvider.getCompetitions2(
+                    quizProvider.getCategory(quizProvider.category),
+                    context,
+                    quizProvider.getType(1));
+                // ignore: use_build_context_synchronously
                 Navigator.pushNamed(context, AppRouter.adminCometition);
               },
               child: Card(
@@ -43,9 +49,13 @@ class TypeContestScreen extends StatelessWidget {
               height: 10,
             ),
             InkWell(
-              onTap: () {
+              onTap: () async {
                 quizProvider.changetype(2);
-
+                await quizProvider.getCompetitions2(
+                    quizProvider.getCategory(quizProvider.category),
+                    context,
+                    quizProvider.getType(2));
+                // ignore: use_build_context_synchronously
                 Navigator.pushNamed(context, AppRouter.adminCometition);
               },
               child: Card(
@@ -74,9 +84,14 @@ class TypeContestScreen extends StatelessWidget {
               height: 10,
             ),
             InkWell(
-              onTap: () {
+              onTap: () async {
                 quizProvider.changetype(3);
 
+                await quizProvider.getCompetitions2(
+                    quizProvider.getCategory(quizProvider.category),
+                    context,
+                    quizProvider.getType(3));
+                // ignore: use_build_context_synchronously
                 Navigator.pushNamed(context, AppRouter.adminCometition);
               },
               child: Card(

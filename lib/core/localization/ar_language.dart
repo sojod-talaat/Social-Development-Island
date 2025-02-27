@@ -1,7 +1,7 @@
 const Map<String, String> ar = {
   'title': 'جزيرة التنمية الاجتماعية',
   'signup': 'قم بانشاء حسابك الان:',
-  'username': 'اسم المستخدم',
+  'username': ' الاسم ثلاثي ',
   'Email Address': 'عنوان البريد الالكتروني',
   'Phone Number': 'رقم الهاتف',
   'age': 'العمر',

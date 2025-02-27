@@ -8,7 +8,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import 'package:island_social_development/core/routing/app_router.dart';
 
-// ignore: must_be_immutable
 class FamQuestionScreen extends StatefulWidget {
   QuestionModel todayQuestion;
   FamQuestionScreen({super.key, required this.todayQuestion});
@@ -20,9 +19,9 @@ class FamQuestionScreen extends StatefulWidget {
 class _FamQuestionScreenState extends State<FamQuestionScreen> {
   SharedPreferencesHelper prefsHelper = SharedPreferencesHelper();
   int correctAnswersCount = 0;
-  String? selectedAnswer; // رمز الإجابة
+  String? selectedAnswer;
   bool hasAnswered = false;
-  bool isAnswerWrong = false;
+  bool isAnswerCorrect = false;
   String familyName = '';
   DateTime? lastAnsweredDate;
 
@@ -34,10 +33,9 @@ class _FamQuestionScreenState extends State<FamQuestionScreen> {
 
   Future<void> _loadFamilyData() async {
     familyName = await prefsHelper.getFamName();
+    print(familyName);
     if (familyName.isNotEmpty) {
-      await _fetchCorrectAnswersCount();
       await _checkIfAnswered();
-      await _checkIfNewDay();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -46,45 +44,17 @@ class _FamQuestionScreenState extends State<FamQuestionScreen> {
     }
   }
 
-  Future<void> _fetchCorrectAnswersCount() async {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('families')
-        .doc(familyName)
-        .get();
-    if (doc.exists && doc['correctAnswersCount'] != null) {
-      setState(() {
-        correctAnswersCount = doc['correctAnswersCount'];
-      });
-    }
-  }
-
   Future<void> _checkIfAnswered() async {
     DocumentSnapshot doc = await FirebaseFirestore.instance
         .collection('family_quiz_answers')
         .doc(familyName)
         .get();
-    setState(() {
-      hasAnswered = doc.exists;
-      if (hasAnswered) {
+    if (doc.exists) {
+      setState(() {
+        hasAnswered = doc['answered'] ?? false;
+        isAnswerCorrect = doc['isCorrect'] ?? false;
         lastAnsweredDate = doc['dateAnswered']?.toDate();
-      }
-    });
-  }
-
-  Future<void> _checkIfNewDay() async {
-    if (lastAnsweredDate != null) {
-      DateTime currentDate = DateTime.now();
-      if (currentDate.day != lastAnsweredDate!.day ||
-          currentDate.month != lastAnsweredDate!.month ||
-          currentDate.year != lastAnsweredDate!.year) {
-        await FirebaseFirestore.instance
-            .collection('family_quiz_answers')
-            .doc(familyName)
-            .update({'answered': false, 'dateAnswered': currentDate});
-        setState(() {
-          hasAnswered = false;
-        });
-      }
+      });
     }
   }
 
@@ -95,37 +65,37 @@ class _FamQuestionScreenState extends State<FamQuestionScreen> {
       return;
     }
 
-    // مقارنة الإجابة المختارة مع الإجابة الصحيحة (المخزنة كرمز)
     bool isCorrect = widget.todayQuestion.correctAnswer == selectedAnswer;
+    await FirebaseFirestore.instance
+        .collection('family_quiz_answers')
+        .doc(familyName)
+        .set({
+      'answered': true,
+      'isCorrect': isCorrect,
+      'dateAnswered': DateTime.now(),
+    });
+
     if (isCorrect) {
-      await FirebaseFirestore.instance
-          .collection('family_quiz_answers')
-          .doc(familyName)
-          .set({
-        'answered': true,
-        'dateAnswered': DateTime.now(),
-      });
       await FirebaseFirestore.instance
           .collection('families')
           .doc(familyName)
           .update({'correctAnswersCount': FieldValue.increment(1)});
       setState(() {
         correctAnswersCount++;
+        isAnswerCorrect = true;
         hasAnswered = true;
-        isAnswerWrong = false;
       });
-
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("إجابة صحيحة!")));
-      Navigator.pop(context);
     } else {
       setState(() {
-        isAnswerWrong = true;
+        hasAnswered = true;
+        isAnswerCorrect = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("إجابة خاطئة، حاول غدًا!")));
-      Navigator.pushNamed(context, AppRouter.userhome);
     }
+    Navigator.pop(context);
   }
 
   @override
@@ -141,7 +111,7 @@ class _FamQuestionScreenState extends State<FamQuestionScreen> {
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: familyName.isEmpty
-                ? const Center(child: CircularProgressIndicator())
+                ? const CircularProgressIndicator()
                 : hasAnswered
                     ? const Center(
                         child: Text(
@@ -166,19 +136,15 @@ class _FamQuestionScreenState extends State<FamQuestionScreen> {
                                   .asMap()
                                   .entries
                                   .map((entry) {
-                                String optionKey = String.fromCharCode(
-                                    65 + entry.key); // "a", "b", "c", "d"
+                                String optionKey =
+                                    String.fromCharCode(65 + entry.key);
                                 bool isSelected = optionKey == selectedAnswer;
                                 return GestureDetector(
-                                  onTap: isAnswerWrong
-                                      ? null
-                                      : () {
-                                          print(optionKey);
-                                          setState(() {
-                                            selectedAnswer =
-                                                optionKey; // تخزين الرمز
-                                          });
-                                        },
+                                  onTap: () {
+                                    setState(() {
+                                      selectedAnswer = optionKey;
+                                    });
+                                  },
                                   child: QuizOptionWidget(
                                     option: entry.value,
                                     isSelected: isSelected,
@@ -189,12 +155,9 @@ class _FamQuestionScreenState extends State<FamQuestionScreen> {
                               SizedBox(
                                 width: double.infinity,
                                 child: ElevatedButton(
-                                  onPressed:
-                                      isAnswerWrong ? null : _submitAnswer,
-                                  child: Text(
-                                    "إرسال الإجابة",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
+                                  onPressed: _submitAnswer,
+                                  child: const Text("إرسال الإجابة",
+                                      style: TextStyle(fontSize: 18)),
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(
                                         vertical: 16.0),
@@ -205,14 +168,6 @@ class _FamQuestionScreenState extends State<FamQuestionScreen> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 20),
-                              isAnswerWrong
-                                  ? const Text(
-                                      "إجابة خاطئة، حاول غدًا!",
-                                      style: TextStyle(
-                                          color: Colors.red, fontSize: 16),
-                                    )
-                                  : Container(),
                             ],
                           ),
           ),

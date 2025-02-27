@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:island_social_development/controllers/auth_controller.dart';
+import 'package:island_social_development/controllers/firestore_controller.dart';
 import 'package:island_social_development/core/localization/app_localization.dart';
 import 'package:island_social_development/core/providers/auth_provider.dart';
 import 'package:island_social_development/core/theme/app_style.dart';
 import 'package:island_social_development/core/utils/app_assets.dart';
 import 'package:island_social_development/core/utils/app_color.dart';
+import 'package:island_social_development/core/utils/hive_box.dart';
 
 import 'package:island_social_development/views/notification.dart';
 import 'package:provider/provider.dart';
@@ -27,9 +29,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    SharedPreferencesHelper prefsHelper = SharedPreferencesHelper();
     var local = AppLocalizations.of(context);
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) => Scaffold(
+        // floatingActionButton: FloatingActionButton(onPressed: () async {
+        //   await AuthController.authhelper.signout();
+        //   await prefsHelper.removeUser();
+        // }),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

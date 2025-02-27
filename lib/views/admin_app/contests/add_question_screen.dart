@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:island_social_development/core/providers/quiz_provider.dart';
 import 'package:island_social_development/core/theme/app_style.dart';
 import 'package:island_social_development/core/utils/app_color.dart';
+import 'package:island_social_development/views/admin_app/Family/quiz_question.dart';
 import 'package:island_social_development/views/auth/widgets/custom_text_form_field.dart';
 import 'package:provider/provider.dart';
 
@@ -133,19 +134,27 @@ class _AddQuestionPageState extends State<AddQuestionsPage> {
                       width: MediaQuery.of(context).size.width,
                       height: 64,
                       child: ElevatedButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (widget.type == 1) {
+                            print(widget.type);
+                            print(widget.id);
                             if (quizProvider.questions2.length < widget.count) {
-                              quizProvider.addNewQuestiontoFam1(
-                                quizProvider.questionController.text,
-                                [
-                                  quizProvider.quizoptionA.text,
-                                  quizProvider.quizoptionB.text,
-                                  quizProvider.quizoptionC.text,
-                                  quizProvider.quizoptionD.text
-                                ],
-                                quizProvider.dropdownvalue,
-                              );
+                              await quizProvider.addNewQuestiontoFam1(
+                                  quizProvider.questionController.text,
+                                  [
+                                    quizProvider.quizoptionA.text,
+                                    quizProvider.quizoptionB.text,
+                                    quizProvider.quizoptionC.text,
+                                    quizProvider.quizoptionD.text
+                                  ],
+                                  quizProvider.dropdownvalue,
+                                  widget.id);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => QuestionsScreen(
+                                            quizId: widget.id,
+                                          )));
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(

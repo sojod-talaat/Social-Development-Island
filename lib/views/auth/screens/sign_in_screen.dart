@@ -61,7 +61,7 @@ class SignInScreen extends StatelessWidget {
                       },
                       controller: authProvider.loginemailController,
                       prefix: const Icon(Icons.person_outline),
-                      hint: local.translate('username'),
+                      hint: "البريد الالكتروني",
                       textInputAction: TextInputAction.done,
                       keyboardType: TextInputType.name,
                       validator: (value) =>
@@ -132,6 +132,32 @@ class SignInScreen extends StatelessWidget {
                                 Navigator.pushNamed(context, AppRouter.signup);
                               },
                             text: local.translate('signinterm2'),
+                            style: Theme.of(context)
+                                .textTheme
+                                .button
+                                ?.copyWith(color: AppColors.darkBlue),
+                          ),
+                        ])),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    Row(
+                      children: [
+                        RichText(
+                            text: TextSpan(children: [
+                          TextSpan(
+                            text: "هل نسيت كلمة المرور؟",
+                            style: Theme.of(context).textTheme.button,
+                          ),
+                          TextSpan(
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.pushNamed(
+                                    context, AppRouter.forgetPassword);
+                              },
+                            text: "انقر لاستعادتها",
                             style: Theme.of(context)
                                 .textTheme
                                 .button
