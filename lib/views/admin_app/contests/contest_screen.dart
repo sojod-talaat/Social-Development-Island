@@ -168,19 +168,19 @@ class ReadyCompetitionsTab extends StatelessWidget {
                 return Row(
                   children: [
                     InkWell(
-                      onTap: () {
-                        // // await value.fetchCompetionQuestions(
-                        // //     value.getCategory(value.category),
-                        // //     value.getType(value.type),
-                        // //     competitionList![index].id);
-                        // print(value.fetchCompetionQuestions(
+                      onTap: () async {
+                        // await value.fetchCompetionQuestions(
                         //     value.getCategory(value.category),
                         //     value.getType(value.type),
-                        //     competitionList![index].id));
-                        // Navigator.of(context).push(MaterialPageRoute(
-                        //     builder: (context) => AllQuestionsScreen(
-                        //           Questions: value.questions3,
-                        //         )));
+                        //     competitionList![index].id);
+                        print(value.fetchCompetionQuestions(
+                            value.getCategory(value.category),
+                            value.getType(value.type),
+                            competitionList![index].id));
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => AllQuestionsScreen(
+                                  Questions: value.questions3,
+                                )));
                       },
                       child: Container(
                         width: 150,

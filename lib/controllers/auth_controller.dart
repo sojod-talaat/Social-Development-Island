@@ -86,7 +86,6 @@ class AuthController {
 
   Future<UserModel?> loadUser(BuildContext context) async {
     final userLocal = await prefsHelper.getUserModel();
-    print(userLocal?.userType);
     if (userLocal != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (context.mounted) {

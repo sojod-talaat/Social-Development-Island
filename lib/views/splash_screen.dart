@@ -29,14 +29,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SharedPreferencesHelper prefsHelper = SharedPreferencesHelper();
     var local = AppLocalizations.of(context);
     return Consumer<AuthProvider>(
       builder: (context, authProvider, child) => Scaffold(
-        // floatingActionButton: FloatingActionButton(onPressed: () async {
-        //   await AuthController.authhelper.signout();
-        //   await prefsHelper.removeUser();
-        // }),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
