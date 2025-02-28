@@ -5,6 +5,7 @@ import 'package:island_social_development/models/competition_model.dart';
 import 'package:island_social_development/views/admin_app/contests/add_question_screen.dart';
 import 'package:island_social_development/views/admin_app/contests/all_competition_question.dart';
 import 'package:island_social_development/views/auth/widgets/custom_text_form_field.dart';
+import 'package:island_social_development/views/auth/widgets/snak_bar.dart';
 import 'package:provider/provider.dart';
 
 class CompetitionScreen extends StatefulWidget {
@@ -227,9 +228,8 @@ class ReadyCompetitionsTab extends StatelessWidget {
                               Provider.of<QuizProvider>(context).youthislamic =
                                   competitionList![index];
                           }
-                          print(value.youthislamic);
-                          print(value.youthGenral);
-                          print(value.youthscientific);
+                          SnakBarWidget.show(
+                              context, "تم ارسال المسابقة بنجاح");
                         } else {
                           switch (type) {
                             case "general":
@@ -242,6 +242,8 @@ class ReadyCompetitionsTab extends StatelessWidget {
                               Provider.of<QuizProvider>(context).kidsislamic =
                                   competitionList![index];
                           }
+                          SnakBarWidget.show(
+                              context, "تم ارسال المسابقة بنجاح");
                         }
                       },
                       child: Container(
