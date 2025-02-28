@@ -151,14 +151,16 @@ class ReadyCompetitionsTab extends StatelessWidget {
           const SizedBox(
             height: 100,
           ),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text('اسم المسابقة '),
-              Text('زمن المسابقة '),
-              Text('بداء المسابقة '),
-            ],
-          ),
+          value.competitions2.length != 0
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Text('اسم المسابقة '),
+                    Text('زمن المسابقة '),
+                    Text('بداء المسابقة '),
+                  ],
+                )
+              : Text("لا يتوفر مسابقات لعرضها "),
           Expanded(
             child: ListView.builder(
               itemCount: competitionList!.length,
@@ -166,19 +168,19 @@ class ReadyCompetitionsTab extends StatelessWidget {
                 return Row(
                   children: [
                     InkWell(
-                      onTap: () async {
-                        // await value.fetchCompetionQuestions(
+                      onTap: () {
+                        // // await value.fetchCompetionQuestions(
+                        // //     value.getCategory(value.category),
+                        // //     value.getType(value.type),
+                        // //     competitionList![index].id);
+                        // print(value.fetchCompetionQuestions(
                         //     value.getCategory(value.category),
                         //     value.getType(value.type),
-                        //     competitionList![index].id);
-                        print(value.fetchCompetionQuestions(
-                            value.getCategory(value.category),
-                            value.getType(value.type),
-                            competitionList![index].id));
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => AllQuestionsScreen(
-                                  Questions: value.questions3,
-                                )));
+                        //     competitionList![index].id));
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //     builder: (context) => AllQuestionsScreen(
+                        //           Questions: value.questions3,
+                        //         )));
                       },
                       child: Container(
                         width: 150,
@@ -198,7 +200,7 @@ class ReadyCompetitionsTab extends StatelessWidget {
                     ),
                     Container(
                       width: 50,
-                      padding: EdgeInsets.all(5),
+                      padding: const EdgeInsets.all(5),
                       margin: EdgeInsets.all(5),
                       decoration: BoxDecoration(
                         border: Border.all(
@@ -225,6 +227,9 @@ class ReadyCompetitionsTab extends StatelessWidget {
                               Provider.of<QuizProvider>(context).youthislamic =
                                   competitionList![index];
                           }
+                          print(value.youthislamic);
+                          print(value.youthGenral);
+                          print(value.youthscientific);
                         } else {
                           switch (type) {
                             case "general":

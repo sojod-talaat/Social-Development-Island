@@ -36,79 +36,73 @@ class UserTypeContestScreen extends StatelessWidget {
               ? const Center(
                   child: Text('!لا يوجد مسابقات حتى الان '),
                 )
-              : ListView(
-                  padding: const EdgeInsets.all(10),
-                  //itemCount: competitionList!.length,
-
-                  children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
+              : ListView(padding: const EdgeInsets.all(10), children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      elevation: 6,
+                      shadowColor: Colors.black.withOpacity(0.3),
+                      child: InkWell(
+                        onTap: () async {
+                          await value.fetchQuestions(type, competition.id);
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => StartQuizPage(
+                                  competition,
+                                  value.questions2,
+                                  value.isQuizCompleted(competition.title))));
+                        },
+                        borderRadius: BorderRadius.circular(15),
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(15),
-                          ),
-                          elevation: 6,
-                          shadowColor: Colors.black.withOpacity(0.3),
-                          child: InkWell(
-                            onTap: () async {
-                              await value.fetchQuestions(type, competition.id);
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => StartQuizPage(
-                                      competition,
-                                      value.questions2,
-                                      value.isQuizCompleted(
-                                          competition.title))));
-                            },
-                            borderRadius: BorderRadius.circular(15),
-                            child: Container(
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    AppColors.darkBlue,
-                                    AppColors.primaryGreen
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Icon(Icons.emoji_events,
-                                      color: Colors.white, size: 40),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          competition.title,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 18,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          "عدد الأسئلة: ${competition.questionCount}",
-                                          style: const TextStyle(
-                                              color: Colors.white70),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const Icon(Icons.arrow_forward_ios,
-                                      color: Colors.white),
-                                ],
-                              ),
+                            gradient: const LinearGradient(
+                              colors: [
+                                AppColors.darkBlue,
+                                AppColors.primaryGreen
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
                           ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.emoji_events,
+                                  color: Colors.white, size: 40),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      competition.title,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      "عدد الأسئلة: ${competition.questionCount}",
+                                      style: const TextStyle(
+                                          color: Colors.white70),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Icon(Icons.arrow_forward_ios,
+                                  color: Colors.white),
+                            ],
+                          ),
                         ),
-                      )
-                    ]),
+                      ),
+                    ),
+                  )
+                ]),
         ),
       ),
     );
