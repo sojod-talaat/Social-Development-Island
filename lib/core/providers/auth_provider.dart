@@ -18,7 +18,6 @@ class AuthProvider with ChangeNotifier {
   TextEditingController loginemailController = TextEditingController();
   TextEditingController loginpasswordController = TextEditingController();
   TextEditingController resetpasswordemail = TextEditingController();
-
   bool SignInautoValidate = false;
   bool SignUpautoValidate = false;
   UserModel? currentUser;
@@ -198,16 +197,6 @@ class AuthProvider with ChangeNotifier {
 
     return null;
   }
-
-  bool _isHeadOfFamily = false;
-
-  bool get isHeadOfFamily => _isHeadOfFamily;
-
-  void toggleHeadOfFamily(bool value) {
-    _isHeadOfFamily = value;
-    notifyListeners(); // إخطار المستمعين بتحديث الحالة
-  }
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isLoading = false;
   String? _errorMessage;

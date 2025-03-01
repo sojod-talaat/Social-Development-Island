@@ -42,11 +42,7 @@ class _CompetitionGridScreenState extends State<CompetitionGridScreen> {
         "icon": LucideIcons.bookOpen,
         "gradient": [Colors.orange, Colors.deepOrangeAccent],
       },
-      {
-        "title": "مسابقات الأسرة",
-        "icon": LucideIcons.users,
-        "gradient": [Colors.red, Colors.pinkAccent],
-      },
+     
     ];
 
     return Consumer<QuizProvider>(
@@ -117,12 +113,7 @@ class _CompetitionGridScreenState extends State<CompetitionGridScreen> {
                         ),
                       );
                       break;
-                    case 3:
-                      await value.getAllQuizes();
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              QuizesScreen(quiz: value.quizes)));
-                      break;
+                   
                   }
                 },
                 borderRadius: BorderRadius.circular(15),
@@ -130,7 +121,7 @@ class _CompetitionGridScreenState extends State<CompetitionGridScreen> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [AppColors.darkBlue, AppColors.secondaryGreen],
-                      //categories[index]['gradient'],
+                    
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),

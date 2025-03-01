@@ -202,7 +202,7 @@ class ReadyCompetitionsTab extends StatelessWidget {
                     Container(
                       width: 50,
                       padding: const EdgeInsets.all(5),
-                      margin: EdgeInsets.all(5),
+                      margin: const EdgeInsets.all(5),
                       decoration: BoxDecoration(
                         border: Border.all(
                           color: Colors.grey, // لون الحدود

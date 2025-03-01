@@ -22,7 +22,7 @@ class UserTypeContestScreen extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
-          backgroundColor: AppColors.darkBlue, // لون أنيق لشريط التطبيق
+          backgroundColor: AppColors.darkBlue,
         ),
         body: Container(
           decoration: const BoxDecoration(
@@ -34,7 +34,7 @@ class UserTypeContestScreen extends StatelessWidget {
           ),
           child: value.competitions.isEmpty
               ? const Center(
-                  child: Text('!لا يوجد مسابقات حتى الان '),
+                  child: Text('!لا يوجد مسابقات  مرسلة بعد '),
                 )
               : ListView(padding: const EdgeInsets.all(10), children: [
                   Padding(

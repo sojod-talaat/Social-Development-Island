@@ -21,11 +21,11 @@ class SignUpScreen extends StatelessWidget {
     var local = AppLocalizations.of(context);
 
     return DefaultTabController(
-      length: 2, // عدد التابات (واحد لرب الأسرة وآخر للمستخدم العادي)
+      length: 2,
       child: Consumer<AuthProvider>(
         builder: (context, authProvider, child) => Scaffold(
           appBar: AppBar(
-            title: Text(local.translate('signUp')),
+            title: Text(local.translate('signup')),
             bottom: const TabBar(
               tabs: [
                 Tab(text: "تسجيل الطلاب "),
@@ -35,9 +35,6 @@ class SignUpScreen extends StatelessWidget {
           ),
           body: TabBarView(
             children: [
-              // Tab for "رب الأسرة"
-
-              // Tab for "المستخدم العادي"
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: SingleChildScrollView(
@@ -281,7 +278,7 @@ class SignUpScreen extends StatelessWidget {
                               authProvider.submitSignUpForm(
                                   context, famKey, "2");
 
-                              // Navigator.pushNamed(context, AppRouter.famQuizes);
+                              
                             },
                             style: ButtonStyle(
                               backgroundColor:
