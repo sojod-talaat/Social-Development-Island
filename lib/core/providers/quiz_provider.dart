@@ -2,8 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:island_social_development/controllers/firestore_controller.dart';
-import 'package:island_social_development/core/routing/app_router.dart';
-import 'package:island_social_development/core/utils/hive_box.dart';
+import 'package:island_social_development/core/utils/shared_prefrence.dart';
 import 'package:island_social_development/models/competition_model.dart';
 import 'package:island_social_development/models/fam_answer.dart';
 import 'package:island_social_development/models/question_model.dart';
@@ -17,6 +16,7 @@ class QuizProvider with ChangeNotifier {
     getCurrentuser();
     loadResults();
     getAllFamily();
+    getAllQuizes();
   }
 
   QuestionModel? dailyQuestion;
@@ -228,13 +228,13 @@ class QuizProvider with ChangeNotifier {
     return youthGenral;
   }
 
-  Future<List<CompetitionModel>>? getCompetitions(
-      BuildContext context, String type) async {
-    competitions = await FireStoreController.fireStoreHelper
-        .getCompetitions(category: checkCategory(), type: type);
-    notifyListeners();
-    return competitions;
-  }
+  // Future<List<CompetitionModel>>? getCompetitions(
+  //     BuildContext context, String type) async {
+  //   competitions = await FireStoreController.fireStoreHelper
+  //       .getCompetitions(category: checkCategory(), type: type);
+  //   notifyListeners();
+  //   return competitions;
+  // }
 
   List<CompetitionModel> competitions2 = [];
 
@@ -242,7 +242,7 @@ class QuizProvider with ChangeNotifier {
       String category, BuildContext context, String type) async {
     competitions2 = await FireStoreController.fireStoreHelper
         .getCompetitions(category: category, type: type);
-    print(competitions2.length);
+    //print(competitions2.length);
     return competitions2;
   }
 
@@ -333,26 +333,9 @@ class QuizProvider with ChangeNotifier {
   }
 
   int score = 0;
-  check(BuildContext context, String option, int index) {
-    if (option == questions2[index].correctAnswer) {
-      score++;
-      notifyListeners();
-    }
-
-    if (index + 1 == questions2.length) {
-      if (score < 5) {
-      } else if (score == 5) {
-      } else {}
-    }
-    score == 0;
-
-    notifyListeners();
-  }
-
   //النتيييجة
   Map<int, String> selectedAnswers = {}; // الإجابات المحددة
 // قائمة الأسئلة
-
   void selectAnswer(int questionIndex, String option) {
     selectedAnswers[questionIndex] = option;
     notifyListeners();
@@ -376,7 +359,6 @@ class QuizProvider with ChangeNotifier {
   // دالة لحساب النتيجة
   int calculateScore() {
     score = 0;
-
     for (int i = 0; i < questions2.length; i++) {
       if (selectedAnswers[i] == questions2[i].correctAnswer) {
         score++;
@@ -385,7 +367,6 @@ class QuizProvider with ChangeNotifier {
     return score;
   }
 
-  // دالة التخزين
   // دالة لتخزين النتيجة باستخدام FirestoreHelper
   Future<void> saveResult(
     String cometitonName,
@@ -414,15 +395,15 @@ class QuizProvider with ChangeNotifier {
   }
 
   ///////////////////////////
-  bool userAnser = false;
+  bool userAnswer = false;
   bool isQuizCompleted(
     String competitionId,
   ) {
-    userAnser = results.any((quiz) =>
+    userAnswer = results.any((quiz) =>
         quiz['cometitionName'] == competitionId &&
         quiz['userName'] == currentUser?.name);
 
-    return userAnser;
+    return userAnswer;
   }
 
 ////////////////////////

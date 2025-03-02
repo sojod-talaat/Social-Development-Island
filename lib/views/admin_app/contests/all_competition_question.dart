@@ -76,16 +76,7 @@ class _QuestionsScreenState extends State<AllQuestionsScreen> {
                           // 🔄 زر التعديل
                           IconButton(
                             icon: const Icon(Icons.edit, color: Colors.blue),
-                            onPressed: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) => EditQuestionScreen(
-                              //         quizId: widget.quizId,
-                              //         question: question),
-                              //   ),
-                              // );
-                            },
+                            onPressed: () {},
                           ),
                         ],
                       ),

@@ -63,7 +63,7 @@ class SignInScreen extends StatelessWidget {
                       prefix: const Icon(Icons.person_outline),
                       hint: "البريد الالكتروني",
                       textInputAction: TextInputAction.done,
-                      keyboardType: TextInputType.name,
+                      keyboardType: TextInputType.emailAddress,
                       validator: (value) =>
                           authProvider.validateEmail(value ?? 'test'),
                     ),

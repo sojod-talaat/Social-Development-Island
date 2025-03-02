@@ -27,6 +27,8 @@ class SignUpScreen extends StatelessWidget {
           appBar: AppBar(
             title: Text(local.translate('signup')),
             bottom: const TabBar(
+              labelColor: AppColors.whiteColor,
+              dividerColor: AppColors.darkBlue,
               tabs: [
                 Tab(text: "تسجيل الطلاب "),
                 Tab(text: "تسجيل رب الاسرة "),
@@ -57,6 +59,7 @@ class SignUpScreen extends StatelessWidget {
                             fontSize: 20,
                           ),
                         ),
+                        const SizedBox(height: 12),
                         CustomTextField(
                           onChange: (value) {
                             authProvider.nameController.text = value;
@@ -94,7 +97,7 @@ class SignUpScreen extends StatelessWidget {
                           ),
                           items: const [
                             DropdownMenuItem(
-                              value: 'المرحلة الابتدائية',
+                              value: '1',
                               child: Text("المرحلة الابتدائية"),
                             ),
                             DropdownMenuItem(
@@ -223,8 +226,8 @@ class SignUpScreen extends StatelessWidget {
                             authProvider.emailController.text = value;
                           },
                           controller: authProvider.emailController,
-                          keyboardType: TextInputType.name,
-                          prefix: const Icon(Icons.family_restroom),
+                          keyboardType: TextInputType.emailAddress,
+                          prefix: const Icon(Icons.alternate_email_rounded),
                           hint: " البريد الالكتروني  ",
                           textInputAction: TextInputAction.done,
                           validator: (value) =>
@@ -277,8 +280,6 @@ class SignUpScreen extends StatelessWidget {
                             onPressed: () async {
                               authProvider.submitSignUpForm(
                                   context, famKey, "2");
-
-                              
                             },
                             style: ButtonStyle(
                               backgroundColor:

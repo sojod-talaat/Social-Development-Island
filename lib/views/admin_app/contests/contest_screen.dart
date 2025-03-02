@@ -55,81 +55,84 @@ class CreateCompetitionTab extends StatelessWidget {
       builder: (context, quizProvider, child) => Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(
-                height: 25,
-              ),
-              const Text('قم باضافة مسابقة جديدة'),
-              const SizedBox(height: 12),
-              CustomTextField(
-                validator: (value) =>
-                    quizProvider.validateCompetitionName(value ?? ''),
-                controller: quizProvider.contestName,
-                hint: 'اسم المسابقة',
-                textInputAction: TextInputAction.done,
-                keyboardType: TextInputType.name,
-              ),
-              const SizedBox(height: 10),
-              CustomTextField(
-                validator: (value) =>
-                    quizProvider.validateCompetitonLeth(value ?? ''),
-                controller: quizProvider.conestlenght,
-                hint: 'عدد الأسئلة',
-                textInputAction: TextInputAction.done,
-                keyboardType: TextInputType.number,
-              ),
-              const SizedBox(height: 12),
-              CustomTextField(
-                validator: (value) =>
-                    quizProvider.validateCompetitonLeth(value ?? ''),
-                controller: quizProvider.timerController,
-                hint: 'مدة المسابقة',
-                textInputAction: TextInputAction.done,
-                keyboardType: TextInputType.number,
-                suffix: IconButton(
-                  onPressed: () {
-                    //quizProvider.setTimerDuration(context);
-                  },
-                  icon: const Icon(Icons.timer),
+          child: Form(
+            key: quizProvider.competitioKey,
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 25,
                 ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                height: 64,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (quizProvider.competitioKey.currentState!.validate()) {
-                      competitionModel = quizProvider.addComptition();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AddQuestionsPage(
-                            count: competitionModel.questionCount,
-                            id: competitionModel.id,
-                            type: 2,
+                const Text('قم باضافة مسابقة جديدة'),
+                const SizedBox(height: 12),
+                CustomTextField(
+                  validator: (value) =>
+                      quizProvider.validateCompetitionName(value ?? ''),
+                  controller: quizProvider.contestName,
+                  hint: 'اسم المسابقة',
+                  textInputAction: TextInputAction.done,
+                  keyboardType: TextInputType.name,
+                ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  validator: (value) =>
+                      quizProvider.validateCompetitonLeth(value ?? ''),
+                  controller: quizProvider.conestlenght,
+                  hint: 'عدد الأسئلة',
+                  textInputAction: TextInputAction.done,
+                  keyboardType: TextInputType.number,
+                ),
+                const SizedBox(height: 12),
+                CustomTextField(
+                  validator: (value) =>
+                      quizProvider.validateCompetitonLeth(value ?? ''),
+                  controller: quizProvider.timerController,
+                  hint: 'مدة المسابقة',
+                  textInputAction: TextInputAction.done,
+                  keyboardType: TextInputType.number,
+                  suffix: IconButton(
+                    onPressed: () {
+                      //quizProvider.setTimerDuration(context);
+                    },
+                    icon: const Icon(Icons.timer),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: 64,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (quizProvider.competitioKey.currentState!.validate()) {
+                        competitionModel = quizProvider.addComptition();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddQuestionsPage(
+                              count: competitionModel.questionCount,
+                              id: competitionModel.id,
+                              type: 2,
+                            ),
                           ),
+                        );
+                        quizProvider.contestName.clear();
+                        quizProvider.conestlenght.clear();
+                        quizProvider.timerController.clear();
+                      }
+                    },
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all(AppColors.darkBlue),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      );
-                      quizProvider.contestName.clear();
-                      quizProvider.conestlenght.clear();
-                      quizProvider.timerController.clear();
-                    }
-                  },
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(AppColors.darkBlue),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
+                    child: const Text('انتقل لاضافة الأسئلة'),
                   ),
-                  child: const Text('انتقل لاضافة الأسئلة'),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

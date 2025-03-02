@@ -78,7 +78,7 @@ class AuthController {
             context,
           );
         } else {
-          Navigator.pushNamed(context, AppRouter.signup);
+          Navigator.pushReplacementNamed(context, AppRouter.signup);
         }
       });
     });

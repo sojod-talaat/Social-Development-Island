@@ -25,39 +25,6 @@ class _FamQuestionScreenState extends State<FamQuestionScreen> {
   String familyName = '';
   DateTime? lastAnsweredDate;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadFamilyData();
-  }
-
-  Future<void> _loadFamilyData() async {
-    familyName = await prefsHelper.getFamName();
-    print(familyName);
-    if (familyName.isNotEmpty) {
-      await _checkIfAnswered();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text("اسم الأسرة غير موجود. يرجى التسجيل أولاً.")),
-      );
-    }
-  }
-
-  Future<void> _checkIfAnswered() async {
-    DocumentSnapshot doc = await FirebaseFirestore.instance
-        .collection('family_quiz_answers')
-        .doc(familyName)
-        .get();
-    if (doc.exists) {
-      setState(() {
-        hasAnswered = doc['answered'] ?? false;
-        isAnswerCorrect = doc['isCorrect'] ?? false;
-        lastAnsweredDate = doc['dateAnswered']?.toDate();
-      });
-    }
-  }
-
   Future<void> _submitAnswer() async {
     if (selectedAnswer == null) {
       ScaffoldMessenger.of(context)
@@ -85,6 +52,7 @@ class _FamQuestionScreenState extends State<FamQuestionScreen> {
         isAnswerCorrect = true;
         hasAnswered = true;
       });
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("إجابة صحيحة!")));
     } else {
@@ -92,9 +60,11 @@ class _FamQuestionScreenState extends State<FamQuestionScreen> {
         hasAnswered = true;
         isAnswerCorrect = false;
       });
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("إجابة خاطئة، حاول غدًا!")));
     }
+    // ignore: use_build_context_synchronously
     Navigator.pop(context);
   }
 
@@ -156,7 +126,7 @@ class _FamQuestionScreenState extends State<FamQuestionScreen> {
                                 width: double.infinity,
                                 child: ElevatedButton(
                                   onPressed: _submitAnswer,
-                                  child: const Text("إرسال الإجابة",
+                                  child: Text("إرسال الإجابة",
                                       style: TextStyle(fontSize: 18)),
                                   style: ElevatedButton.styleFrom(
                                     padding: const EdgeInsets.symmetric(

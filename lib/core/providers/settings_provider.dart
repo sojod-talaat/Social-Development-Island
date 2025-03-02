@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:island_social_development/controllers/auth_controller.dart';
 import 'package:island_social_development/core/theme/app_theme.dart';
-import 'package:island_social_development/core/utils/hive_box.dart';
+import 'package:island_social_development/core/utils/shared_prefrence.dart';
 
 class SettingsProvider with ChangeNotifier {
   SettingsProvider() {

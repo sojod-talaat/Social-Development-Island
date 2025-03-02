@@ -73,7 +73,7 @@ class AuthProvider with ChangeNotifier {
     UserCredential? userCredential = await AuthController.authhelper
         .signUp(emailController.text, passwordController.text, context);
 
-    int age = (selectedStage == "المرحلة الابتدائية ") ? 12 : 13;
+    int age = (selectedStage == "1") ? 12 : 13;
 
     if (userCredential == null || userCredential.user == null) {
       print("⚠️ فشل إنشاء المستخدم");
@@ -126,7 +126,6 @@ class AuthProvider with ChangeNotifier {
       // ✅ حفظ اسم العائلة محليًا
       prefsHelper.saveFamName(familyName);
     }
-
     // 🔥 تحميل بيانات المستخدم بعد التسجيل
     currentUser = await AuthController.authhelper.loadUser(context);
   }
@@ -197,6 +196,7 @@ class AuthProvider with ChangeNotifier {
 
     return null;
   }
+
   final FirebaseAuth _auth = FirebaseAuth.instance;
   bool _isLoading = false;
   String? _errorMessage;

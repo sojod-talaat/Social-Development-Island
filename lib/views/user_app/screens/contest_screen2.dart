@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:island_social_development/core/providers/quiz_provider.dart';
 import 'package:island_social_development/core/utils/app_color.dart';
 import 'package:island_social_development/core/utils/hive_box.dart';
-import 'package:island_social_development/models/user_model.dart';
-import 'package:island_social_development/views/user_app/screens/Family/fam_question.dart';
-import 'package:island_social_development/views/user_app/screens/quizes.dart';
+
 import 'package:island_social_development/views/user_app/screens/type_contest_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart'; // أيقونات حديثة وجميلة
@@ -18,12 +16,6 @@ class CompetitionGridScreen extends StatefulWidget {
 
 class _CompetitionGridScreenState extends State<CompetitionGridScreen> {
   int age = 0;
-  @override
-  void initState() async {
-    super.initState();
-    SharedPreferencesHelper prefsHelper = SharedPreferencesHelper();
-  }
-
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> categories = [
@@ -42,7 +34,6 @@ class _CompetitionGridScreenState extends State<CompetitionGridScreen> {
         "icon": LucideIcons.bookOpen,
         "gradient": [Colors.orange, Colors.deepOrangeAccent],
       },
-     
     ];
 
     return Consumer<QuizProvider>(
@@ -64,10 +55,10 @@ class _CompetitionGridScreenState extends State<CompetitionGridScreen> {
             itemCount: categories.length,
             itemBuilder: (context, index) {
               return InkWell(
-                onTap: () async {
+                onTap: () {
                   switch (index) {
                     case 0:
-                      await value.getCompetitions(context, "general");
+
                       // ignore: use_build_context_synchronously
                       Navigator.push(
                         context,
@@ -83,7 +74,7 @@ class _CompetitionGridScreenState extends State<CompetitionGridScreen> {
                       break;
                     case 1:
                       // ignore: use_build_context_synchronously
-                      await value.getCompetitions(context, "scientific");
+
                       // ignore: use_build_context_synchronously
                       Navigator.push(
                         context,
@@ -98,8 +89,7 @@ class _CompetitionGridScreenState extends State<CompetitionGridScreen> {
                       );
                       break;
                     case 2:
-                      // ignore: use_build_context_synchronously
-                      await value.getCompetitions(context, "islamic");
+
                       // ignore: use_build_context_synchronously
                       Navigator.push(
                         context,
@@ -113,7 +103,6 @@ class _CompetitionGridScreenState extends State<CompetitionGridScreen> {
                         ),
                       );
                       break;
-                   
                   }
                 },
                 borderRadius: BorderRadius.circular(15),
@@ -121,7 +110,6 @@ class _CompetitionGridScreenState extends State<CompetitionGridScreen> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [AppColors.darkBlue, AppColors.secondaryGreen],
-                    
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),

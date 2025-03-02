@@ -4,24 +4,14 @@ import 'package:island_social_development/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPreferencesHelper {
-  // إنشاء نسخة واحدة فقط من الكلاس (Singleton)
+  static const String _languageKey = 'language';
+  static const String _themeKey = 'theme';
   static final SharedPreferencesHelper _instance =
       SharedPreferencesHelper._internal();
-
-  // مصنع (Factory) لإرجاع النسخة الواحدة
   factory SharedPreferencesHelper() {
     return _instance;
   }
-
-  // مُنشئ داخلي (Private Constructor)
   SharedPreferencesHelper._internal();
-
-  // مفتاح لتخزين بيانات المستخدم
-  static const String _userKey = 'user';
-  // مفتاح لتخزين اللغة
-  static const String _languageKey = 'language';
-  // مفتاح لتخزين الوضع الليلي
-  static const String _themeKey = 'theme';
   Future<UserModel?> getUserModel() async {
     final prefs = await SharedPreferences.getInstance();
     final userJsonString =
@@ -45,14 +35,6 @@ class SharedPreferencesHelper {
   Future<void> removeUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('user'); // حذف البيانات المرتبطة بالمفتاح 'user'
-    print('User data removed from SharedPreferences.'); // طباعة رسالة تأكيد
-  }
-  // دالة لاسترجاع بيانات المستخدم
-
-  // دالة لحذف بيانات المستخدم
-  Future<void> deleteUser() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_userKey);
   }
 
   // دالة لحفظ اللغة
@@ -90,12 +72,6 @@ class SharedPreferencesHelper {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt('fam_added_questions') ??
         0; // إذا لم يكن هناك قيمة، ارجِع 0
-  }
-
-  /// ✅ إعادة تعيين عدد الأسئلة
-  Future<void> resetFamQuestionsCount() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('fam_added_questions', 0);
   }
 
   //حفظ اسم رب الاسرة
