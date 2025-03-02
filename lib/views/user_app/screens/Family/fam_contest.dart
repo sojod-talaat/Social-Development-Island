@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:island_social_development/core/providers/quiz_provider.dart';
 import 'package:island_social_development/core/utils/app_color.dart';
-import 'package:island_social_development/views/user_app/screens/quizes.dart';
+import 'package:island_social_development/views/user_app/screens/Family/quizes.dart';
 import 'package:island_social_development/views/user_app/screens/type_contest_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:lucide_icons/lucide_icons.dart'; // أيقونات حديثة وجميلة
@@ -38,8 +38,7 @@ class FamCompetitionGridScreen extends StatelessWidget {
             itemCount: categories.length,
             itemBuilder: (context, index) {
               return InkWell(
-                onTap: () async {
-                  await value.getAllQuizes();
+                onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => QuizesScreen(quiz: value.quizes)));
                 },

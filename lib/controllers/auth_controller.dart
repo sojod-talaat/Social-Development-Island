@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:island_social_development/core/routing/app_router.dart';
 import 'package:island_social_development/core/utils/app_color.dart';
-import 'package:island_social_development/core/utils/hive_box.dart';
+import 'package:island_social_development/core/utils/shared_prefrence.dart';
 import 'package:island_social_development/models/user_model.dart';
 import 'package:island_social_development/views/auth/widgets/snak_bar.dart';
 

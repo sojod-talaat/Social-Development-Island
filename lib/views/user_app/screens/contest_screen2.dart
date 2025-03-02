@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:island_social_development/core/providers/quiz_provider.dart';
 import 'package:island_social_development/core/utils/app_color.dart';
-import 'package:island_social_development/core/utils/hive_box.dart';
+import 'package:island_social_development/core/utils/shared_prefrence.dart';
 
 import 'package:island_social_development/views/user_app/screens/type_contest_screen.dart';
 import 'package:provider/provider.dart';

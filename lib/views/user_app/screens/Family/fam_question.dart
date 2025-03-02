@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:island_social_development/core/providers/quiz_provider.dart';
 import 'package:island_social_development/core/utils/app_color.dart';
-import 'package:island_social_development/core/utils/hive_box.dart';
+import 'package:island_social_development/core/utils/shared_prefrence.dart';
 import 'package:island_social_development/models/question_model.dart';
 import 'package:island_social_development/views/user_app/widgets/opetion_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

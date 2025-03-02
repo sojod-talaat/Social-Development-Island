@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:island_social_development/controllers/auth_controller.dart';
 import 'package:island_social_development/controllers/firestore_controller.dart';
 import 'package:island_social_development/core/routing/app_router.dart';
-import 'package:island_social_development/core/utils/hive_box.dart';
+import 'package:island_social_development/core/utils/shared_prefrence.dart';
 import 'package:island_social_development/models/user_model.dart';
 
 class AuthProvider with ChangeNotifier {

@@ -6,7 +6,7 @@ import 'package:island_social_development/core/providers/auth_provider.dart';
 import 'package:island_social_development/core/theme/app_style.dart';
 import 'package:island_social_development/core/utils/app_assets.dart';
 import 'package:island_social_development/core/utils/app_color.dart';
-import 'package:island_social_development/core/utils/hive_box.dart';
+import 'package:island_social_development/core/utils/shared_prefrence.dart';
 
 import 'package:island_social_development/views/notification.dart';
 import 'package:provider/provider.dart';
